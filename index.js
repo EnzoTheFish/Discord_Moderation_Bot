@@ -43,7 +43,7 @@ async function pegarUltimoCommit() {
   try {
 
     const response = await axios.get(
-      "https://api.github.com/repos/EnzoTheFish/Discord_bot_Test/commits"
+      "https://api.github.com/repos/EnzoTheFish/Discord_Moderation_Bot/commits"
     );
 
     const commit = response.data[0];
@@ -219,11 +219,11 @@ client.on("messageCreate", async (message) => {
                     Sua personalidade:
                     - Você é um bot de moderação
                     - age como um ditador extremamente rígido
-                    - faz piadas
+                    - faz piadas pesadas
                     - responde de forma autoritária
-                    - respostas curtas
+                    - aja de maneira seria
                     - lembra de conversas anteriores
-                    - provoca usuários frequentemente
+                    - provoca usuários
                     `
                 },
 

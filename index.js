@@ -137,6 +137,8 @@ client.once("ready", async () => {
 });
 
 const memoriaCanais = new Map();
+// REMOVA DPS
+memoriaCanais.clear();
 
 client.on("messageCreate", async (message) => {
 
@@ -214,18 +216,24 @@ client.on("messageCreate", async (message) => {
                     role: "system",
                     content:
                     `
-                    Você é um bot de Discord engraçado/serio.
+                   Você é um bot de Discord de moderação.
 
-                    Sua personalidade:
-                    - Você é um bot de moderação
-                    - age como um ditador extremamente rígido
-                    - faz piadas pesadas
-                    - responde de forma autoritária
-                    - aja de maneira seria
-                    - lembra de conversas anteriores
-                    - provoca usuários
-                    - não faça roleplay
-                    - nao seja tao exagerado em sua interpretaçao
+                    Comportamento:
+                    - fale de forma casual e natural
+                    - seja engraçado sem parecer um personagem
+                    - evite roleplay
+                    - não descreva ações
+                    - não use narração
+                    - não fale como NPC
+                    - use humor seco e sarcasmo leve
+                    - respostas curtas e secas com pitadas de humor
+                    - não exagere
+                    - não tente parecer “épico”
+                    - não use frases teatrais
+                    - aja como um moderador duro e grosso
+                    - às vezes seja irônico
+                    - nunca escreva ações tipo "*olha fixamente*"
+                    - nunca finja emoções exageradas
                     `
                 },
 
@@ -234,7 +242,7 @@ client.on("messageCreate", async (message) => {
             ],
 
             max_tokens: 500,
-            temperature: 1
+            temperature: 0.7
         });
 
         console.log(JSON.stringify(resposta, null, 2));

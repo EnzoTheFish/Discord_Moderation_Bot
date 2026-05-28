@@ -25,8 +25,8 @@ const openai = new OpenAI({
 const palavrasProibidas =
   process.env.BLACKLIST.split(",");
 
-  const palavrasUnicas =
-  process.env.PALAVRASUNICAS.split(",");
+  const whitelist =
+  process.env.WHITELIST.split(",");
 
 const equivalencias = {
   a: "[.-a4@α🇦å]+",
@@ -36,7 +36,8 @@ const equivalencias = {
   s: "[s5$z]+",
   g: "[--.g6&🇬𝓰ⓖ🅖]+",
   n: "[-.пиn🇳Ñ𝓷ⓝₙ🅝]+",
-  r: "[r𝓻ⓡᵣ🅡]+"
+  r: "[r𝓻ⓡᵣ🅡]+",
+  t: "[t7]+"
 };
 
 async function pegarUltimoCommit() {
@@ -75,7 +76,10 @@ function gerarRegex(palavrasProibidas) {
       .join("[^\\p{L}\\p{N}]*");
   });
 
-  return new RegExp(patterns.join("|"), "iu");
+  return new RegExp(
+  `\\b(?:${patterns.join("|")})\\b`,
+  "iu"
+);
 }
 
 const regex = gerarRegex(palavrasProibidas);
@@ -89,11 +93,24 @@ client.on("messageCreate", async (message) => {
 
   const texto = message.content.toLowerCase();
 
-  const contemPalavra = regex.test(texto);
+  const palavrasMensagem = texto.split(/\s+/);
 
-  console.log(texto);
+  let detectou = false;
 
-  if (contemPalavra || texto == palavrasUnicas) {
+  for (const palavra of palavrasMensagem) {
+
+  if (whitelist.includes(palavra)) {
+    continue;
+  }
+
+  if (regex.test(palavra)) {
+    detectou = true;
+    break;
+  }
+}
+ console.log(texto);
+
+  if (detectou) {
 
     console.log("Mensagem original:", message.content, "autor: ", message.author);
 

@@ -21,21 +21,22 @@ const openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
     apiKey: process.env.DEEPSEEK_API_KEY});
 
-  
-
 
 const palavrasProibidas =
   process.env.BLACKLIST.split(",");
 
+  const palavrasUnicas =
+  process.env.PALAVRASUNICAS.split(",");
+
 const equivalencias = {
   a: "[.-a4@α🇦å]+",
-  e: "[e3ę𝓮]+",
-  i: "[i1!..🇮ïl𝓲]+",
+  e: "[e3ę𝓮ⓔₑ🅔]+",
+  i: "[i1!..🇮ïl𝓲ⓘᵢ🅘]+",
   o: "[o0]+",
   s: "[s5$z]+",
-  g: "[--.g6&🇬𝓰]+",
-  n: "[-.пиn🇳Ñ𝓷]+",
-  r: "[r𝓻]+"
+  g: "[--.g6&🇬𝓰ⓖ🅖]+",
+  n: "[-.пиn🇳Ñ𝓷ⓝₙ🅝]+",
+  r: "[r𝓻ⓡᵣ🅡]+"
 };
 
 async function pegarUltimoCommit() {
@@ -90,7 +91,9 @@ client.on("messageCreate", async (message) => {
 
   const contemPalavra = regex.test(texto);
 
-  if (contemPalavra) {
+  console.log(texto);
+
+  if (contemPalavra || texto == palavrasUnicas) {
 
     console.log("Mensagem original:", message.content, "autor: ", message.author);
 
@@ -137,8 +140,6 @@ client.once("ready", async () => {
 });
 
 const memoriaCanais = new Map();
-// REMOVA DPS
-memoriaCanais.clear();
 
 client.on("messageCreate", async (message) => {
 

@@ -145,7 +145,7 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => { 
   const canal = client.channels.cache.get("1509193642642903132");
 
-  let test = false;
+  let test = true;
   if(test) return;
 
   const commit = await pegarUltimoCommit();
@@ -221,19 +221,23 @@ client.on("messageCreate", async (message) => {
                 ${message.content}`
             }
         ];
-
-        if (anexo?.contentType?.startsWith("image/")) {
+          if (anexo?.contentType?.startsWith("image/")) {
             conteudoUsuario.push({
                 type: "image_url",
                 image_url: {url: anexo.url}});
         }
         historico.push({
-            role: "user",
-            content:` Usuário: ${message.author.username}
-               ${contextoReply}
-               Mensagem:${message.content}
-               ${anexo ? "[Imagem enviada pelo usuário]" : ""}`
-        });
+          role: "user",
+          content: anexo ? conteudoUsuario : `
+          Usuário: ${message.author.username}
+          ${contextoReply}
+          Mensagem:${message.content} `});
+
+
+          console.log(JSON.stringify(resposta, null, 2));
+          console.log(anexo);
+          console.log(anexo?.contentType);
+          console.log(anexo?.url);
 
         const resposta = await openai.chat.completions.create({
 
@@ -285,7 +289,6 @@ client.on("messageCreate", async (message) => {
             max_tokens: 700,
             temperature: 0.7
         });
-
 
         console.log(JSON.stringify(resposta, null, 2));
 

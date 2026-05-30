@@ -1,6 +1,6 @@
 const deepseek = require("./deepseekClient");
 const systemPrompt = require("./systemPrompt");
-const responseI = require("./geminiImage");
+const analisarImagem = require("./geminiImage");
 
 const memoriaCanais = new Map();
 const CANAL_PENSAMENTOS_ID = "1510323342677246204";
@@ -64,6 +64,7 @@ function registrarHandlerIA(client) {
     client.on("messageCreate", async (message) => {
         if (message.author.bot) return;
 
+
         const botMarcado = message.mentions.has(client.user);
         const { respondeuBot, contextoReply } = await montarContextoReply(message, client);
 
@@ -80,22 +81,29 @@ function registrarHandlerIA(client) {
 
             const historico = memoriaCanais.get(canalId);
             const anexo = message.attachments.first();
+            let descricaoImagem = "";
+
+         if (anexo?.contentType?.startsWith("image/")) {
+
+            descricaoImagem =
+                await analisarImagem(anexo.url);
+
+            console.log(
+                "imagem:",
+                descricaoImagem
+                );
+            }
 
 
             historico.push({
                 role: "user",
-                content: criarConteudoUsuario(message, contextoReply, anexo)
-            });
+                content: `${criarConteudoUsuario(message,contextoReply,anexo)}
+                 Descrição da imagem feita pelo Gemini: ${descricaoImagem}`
+                 });
 
             console.log(anexo);
             console.log(anexo?.contentType);
             console.log(anexo?.url);
-
-             if(anexo.url){
-
-                anexo = responseI?.choices?.[0]?.message;
-
-            }
 
             const resposta = await deepseek.chat.completions.create({
                 model: "deepseek-v4-flash",
@@ -150,4 +158,3 @@ function registrarHandlerIA(client) {
 }
 
 module.exports = registrarHandlerIA;
-module.exports = anexo;

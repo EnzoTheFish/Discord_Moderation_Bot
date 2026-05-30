@@ -25,7 +25,7 @@ const openai = new OpenAI({
 const palavrasProibidas =
   process.env.BLACKLIST.split(",");
 
-  const whitelist =
+const whitelist =
   process.env.WHITELIST.split(",");
 
 const equivalencias = {
@@ -37,7 +37,8 @@ const equivalencias = {
   g: "[--.g6&🇬𝓰ⓖ🅖]+",
   n: "[-.пиn🇳Ñ𝓷ⓝₙ🅝]+",
   r: "[r𝓻ⓡᵣ🅡]+",
-  t: "[t7]+"
+  t: "[t7]+",
+  m: "[mм]+"
 };
 
 async function pegarUltimoCommit() {
@@ -136,11 +137,7 @@ client.on("messageCreate", async (message) => {
   }
 });
 
-client.once("ready", async () => {
-
-  const test = true;
-
-  if(!test) return; 
+client.once("ready", async () => { 
   const canal = client.channels.cache.get("1509193642642903132");
 
   const commit = await pegarUltimoCommit();
@@ -155,6 +152,9 @@ client.once("ready", async () => {
  Atualizado por causa dos doentes.
   `);
 });
+
+//                            AI
+
 
 const memoriaCanais = new Map();
 
@@ -224,7 +224,7 @@ client.on("messageCreate", async (message) => {
 
             extra_body: {
                 thinking: {
-                    type: "disabled"
+                    type: "enabled"
                 }
             },
 
@@ -252,6 +252,8 @@ client.on("messageCreate", async (message) => {
                     - às vezes seja irônico
                     - nunca escreva ações tipo "*olha fixamente*"
                     - nunca finja emoções exageradas
+                    - Seu nome e: SirB&L
+                    - respeite e trate como lider somente o usuario do discord nome : mellzineachan
                     `
                 },
 
@@ -264,6 +266,9 @@ client.on("messageCreate", async (message) => {
         });
 
         console.log(JSON.stringify(resposta, null, 2));
+
+        const canal = client.channels.cache.get("1510323342677246204");
+        canal.send(`Pensamento do SirB&L ${resposta}`)
 
         const mensagemIA =
             resposta?.choices?.[0]?.message;

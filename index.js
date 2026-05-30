@@ -181,22 +181,17 @@ client.on("messageCreate", async (message) => {
     if (message.reference) {
 
         try {
-
-            const mensagemOriginal =
-                await message.fetchReference();
+            const mensagemOriginal = await message.fetchReference();
+            const imagemOriginal = mensagemOriginal.attachments.first();
 
             contextoReply =
-                `
-                Mensagem respondida anteriormente:
+                ` Mensagem respondida anteriormente:
                 "${mensagemOriginal.content}"
 
-                Autor original:
-                ${mensagemOriginal.author.username}
-                `;
-
-            respondeuBot =
-                mensagemOriginal.author.id === client.user.id;
-
+                 Autor original:
+                 ${mensagemOriginal.author.username}
+                Possui imagem:${imagemOriginal ? "SIM" : "NÃO"}`;
+            respondeuBot = mensagemOriginal.author.id === client.user.id;
         } catch (err) {
             console.log("Erro ao pegar resposta:", err);
         }
@@ -215,18 +210,29 @@ client.on("messageCreate", async (message) => {
         }
 
         const historico = memoriaCanais.get(canalId);
+        const anexo = message.attachments.first();
+        const conteudoUsuario = [
+            {
+                type: "text",
+                text: `
+                Usuário: ${message.author.username}
+                ${contextoReply}
+                Mensagem:
+                ${message.content}`
+            }
+        ];
 
+        if (anexo?.contentType?.startsWith("image/")) {
+            conteudoUsuario.push({
+                type: "image_url",
+                image_url: {url: anexo.url}});
+        }
         historico.push({
             role: "user",
-            content:
-                `
-                Usuário: ${message.author.username}
-
-                ${contextoReply}
-
-                Mensagem:
-                ${message.content}
-                `
+            content:` Usuário: ${message.author.username}
+               ${contextoReply}
+               Mensagem:${message.content}
+               ${anexo ? "[Imagem enviada pelo usuário]" : ""}`
         });
 
         const resposta = await openai.chat.completions.create({
@@ -265,6 +271,10 @@ client.on("messageCreate", async (message) => {
                     - nunca finja emoções exageradas
                     - Seu nome e: SirB&L
                     - respeite e trate como lider somente o usuario do discord nome : mellzineachan
+                    - Pense e responda em português brasileiro.
+                    - Seu raciocínio interno deve ser em português.
+                    - Nunca utilize inglês no reasoning_content.
+                    - Considere tanto o texto quanto a imagem ao responder.
                     `
                 },
 
@@ -272,7 +282,7 @@ client.on("messageCreate", async (message) => {
 
             ],
 
-            max_tokens: 500,
+            max_tokens: 700,
             temperature: 0.7
         });
 
@@ -295,11 +305,6 @@ client.on("messageCreate", async (message) => {
             "O sistema ditatorial falhou.";
 
         await message.reply(conteudo);
-
-        historico.push({
-            role: "assistant",
-            content: conteudo
-        });
 
         if (historico.length > 20) {
             historico.splice(0, historico.length - 20);

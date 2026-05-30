@@ -145,7 +145,7 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => { 
   const canal = client.channels.cache.get("1509193642642903132");
 
-  let test = true;
+  let test = false;
   if(test) return;
 
   const commit = await pegarUltimoCommit();
@@ -233,8 +233,6 @@ client.on("messageCreate", async (message) => {
           ${contextoReply}
           Mensagem:${message.content} `});
 
-
-          console.log(JSON.stringify(resposta, null, 2));
           console.log(anexo);
           console.log(anexo?.contentType);
           console.log(anexo?.url);

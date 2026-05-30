@@ -169,6 +169,30 @@ client.once("ready", async () => {
 
 const memoriaCanais = new Map();
 
+function criarConteudoUsuario(message, contextoReply, anexo) {
+    const partes = [
+        `Usuario: ${message.author.username}`,
+        contextoReply,
+        `Mensagem:\n${message.content || "(sem texto)"}`
+    ];
+
+    if (anexo?.contentType?.startsWith("image/")) {
+        partes.push(
+            "Imagem enviada: SIM",
+            `Tipo da imagem: ${anexo.contentType}`,
+            `URL da imagem: ${anexo.url}`
+        );
+    } else if (anexo) {
+        partes.push(
+            "Anexo enviado: SIM",
+            `Tipo do anexo: ${anexo.contentType || "desconhecido"}`,
+            `URL do anexo: ${anexo.url}`
+        );
+    }
+
+    return partes.filter(Boolean).join("\n");
+}
+
 client.on("messageCreate", async (message) => {
 
     if (message.author.bot) return;
@@ -211,27 +235,10 @@ client.on("messageCreate", async (message) => {
 
         const historico = memoriaCanais.get(canalId);
         const anexo = message.attachments.first();
-        const conteudoUsuario = [
-            {
-                type: "text",
-                text: `
-                Usuário: ${message.author.username}
-                ${contextoReply}
-                Mensagem:
-                ${message.content}`
-            }
-        ];
-          if (anexo?.contentType?.startsWith("image/")) {
-            conteudoUsuario.push({
-                type: "image",
-                image: {url: anexo.url}});
-        }
         historico.push({
           role: "user",
-          content: anexo ? conteudoUsuario : `
-          Usuário: ${message.author.username}
-          ${contextoReply}
-          Mensagem:${message.content} `});
+          content: criarConteudoUsuario(message, contextoReply, anexo)
+        });
 
           console.log(anexo);
           console.log(anexo?.contentType);
@@ -276,7 +283,8 @@ client.on("messageCreate", async (message) => {
                     - Pense e responda em português brasileiro.
                     - Seu raciocínio interno deve ser em português.
                     - Nunca utilize inglês no reasoning_content.
-                    - Considere tanto o texto quanto a imagem ao responder.
+                    - Se uma imagem for enviada, voce recebera o link e os metadados dela no texto.
+                    - Nao diga que viu detalhes da imagem se eles nao estiverem descritos na mensagem.
                     `
                 },
 

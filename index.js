@@ -268,7 +268,7 @@ client.on("messageCreate", async (message) => {
         console.log(JSON.stringify(resposta, null, 2));
 
         const canal = client.channels.cache.get("1510323342677246204");
-        canal.send(`Pensamento do SirB&L ${resposta}`)
+        canal.send("Pensamento do sirB&L", JSON.stringify(resposta, null, 2))
 
         const mensagemIA =
             resposta?.choices?.[0]?.message;

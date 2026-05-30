@@ -145,7 +145,7 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => { 
   const canal = client.channels.cache.get("1509193642642903132");
 
-  let test = true;
+  let test = false;
   if(test) return;
 
   const commit = await pegarUltimoCommit();
@@ -276,16 +276,18 @@ client.on("messageCreate", async (message) => {
             temperature: 0.7
         });
 
+
         console.log(JSON.stringify(resposta, null, 2));
-
-        const pensamento = JSON.stringify(resposta, null, 2)
-
-         const canal = client.channels.cache.get("1510323342677246204");
-         canal.send(`Pensamento do sirB&L\njson\n${pensamento.slice(0, 1800)}\n`
-);
 
         const mensagemIA =
             resposta?.choices?.[0]?.message;
+
+        const pensamento = resposta?.choices?.[0]?.message?.reasoning_content ||
+        "0 Pensamentos na cabeça.";
+
+         const canal = client.channels.cache.get("1510323342677246204");
+         canal.send(`Pensamento do sirB&L:\n\n${pensamento.slice(0, 1800)}
+         \n\n A resposta: ${mensagemIA.content?.trim()}`);
 
         const conteudo =
             mensagemIA?.content?.trim() ||

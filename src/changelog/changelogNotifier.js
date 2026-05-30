@@ -24,7 +24,7 @@ function registrarChangelog(client) {
     client.once("ready", async () => {
         const canal = client.channels.cache.get(CANAL_CHANGELOG_ID);
 
-        const enviarChangelog = false;
+        const enviarChangelog = true;
         if (!enviarChangelog || !canal) return;
 
         const commit = await pegarUltimoCommit();
@@ -35,7 +35,7 @@ function registrarChangelog(client) {
 
 Atualizacao: ${commit.mensagem}
 
-Atualizado por causa dos doentes.
+Atualizado Pelo Bem Maior.
 `);
     });
 }

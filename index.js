@@ -145,7 +145,7 @@ client.on("messageCreate", async (message) => {
 client.once("ready", async () => { 
   const canal = client.channels.cache.get("1509193642642903132");
 
-  let test = false;
+  let test = true;
   if(test) return;
 
   const commit = await pegarUltimoCommit();
@@ -223,8 +223,8 @@ client.on("messageCreate", async (message) => {
         ];
           if (anexo?.contentType?.startsWith("image/")) {
             conteudoUsuario.push({
-                type: "image_url",
-                image_url: {url: anexo.url}});
+                type: "image",
+                image: {url: anexo.url}});
         }
         historico.push({
           role: "user",

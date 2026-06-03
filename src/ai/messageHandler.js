@@ -43,12 +43,9 @@ async function montarContextoReply(message, client) {
 
         return {
             respondeuBot: mensagemOriginal.author.id === client.user.id,
-            contextoReply: `Mensagem respondida anteriormente:
-"${mensagemOriginal.content}"
-
-Autor original:
-${mensagemOriginal.author.username}
-Possui imagem: ${imagemOriginal ? "SIM" : "NAO"}`
+            contextoReply: `Mensagem respondida anteriormente:"${mensagemOriginal.content}"
+            Autor original: ${mensagemOriginal.author.username}
+            Possui imagem: ${imagemOriginal ? "SIM" : "NAO"}`
         };
     } catch (err) {
         console.log("Erro ao pegar resposta:", err);

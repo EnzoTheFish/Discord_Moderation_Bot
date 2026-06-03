@@ -1,9 +1,6 @@
 const deepseek = require("./deepseekClient");
 const systemPrompt = require("./systemPrompt");
 const analisarImagem = require("./geminiImage");
-
-// Agora a memória salva APENAS a última resposta do bot por canal
-// Assim, se o usuário responder ao bot, temos contexto da conversa anterior
 const memoriaConversa = new Map();
 const CANAL_PENSAMENTOS_ID = "1510323342677246204";
 
@@ -46,8 +43,9 @@ async function montarContextoReply(message, client) {
     try {
         const mensagemOriginal = await message.fetchReference();
         const ehRespostaAoBot = mensagemOriginal.author.id === client.user.id;
+        const imagemOriginal = mensagemOriginal.attachments.first();
 
-        // Se a mensagem é resposta ao bot, busca a última conversa salva
+
         if (ehRespostaAoBot) {
             const canalId = message.channel.id;
             const dadosConversa = memoriaConversa.get(canalId);
@@ -60,17 +58,11 @@ async function montarContextoReply(message, client) {
             }
         }
 
-        // Se não é resposta ao bot, apenas pega o contexto da mensagem respondida
         return {
-<<<<<<< HEAD
             respondeuBot: mensagemOriginal.author.id === client.user.id,
             contextoReply: `Mensagem respondida anteriormente:"${mensagemOriginal.content}"
             Autor original: ${mensagemOriginal.author.username}
             Possui imagem: ${imagemOriginal ? "SIM" : "NAO"}`
-=======
-            respondeuBot: false,
-            contextoReply: `Mensagem respondida:\n"${mensagemOriginal.content}"\nAutor: ${mensagemOriginal.author.username}`
->>>>>>> 65108c20ca149367473e69a809df46fecf30b7e2
         };
     } catch (err) {
         console.log("Erro ao pegar resposta:", err);
@@ -101,7 +93,6 @@ function registrarHandlerIA(client) {
             const anexo = message.attachments.first();
             let descricaoImagem = "";
 
-            // Se o usuário está respondendo ao bot, adiciona a resposta anterior ao contexto
             if (respondeuBot) {
                 const dadosConversa = memoriaConversa.get(canalId);
                 if (dadosConversa) {
@@ -114,8 +105,13 @@ function registrarHandlerIA(client) {
 
             // Analisa imagem se houver
             if (anexo?.contentType?.startsWith("image/")) {
-                descricaoImagem = await analisarImagem(anexo.url);
-                console.log("imagem:", descricaoImagem);
+                try {
+                    descricaoImagem = await analisarImagem(anexo.url, anexo.contentType);
+                    console.log("imagem:", descricaoImagem);
+                } catch (err) {
+                    console.error("Erro ao analisar imagem:", err);
+                    descricaoImagem = "Nao foi possivel analisar a imagem enviada.";
+                }
             }
 
             const mensagemUsuario = criarConteudoUsuario(
@@ -151,8 +147,6 @@ function registrarHandlerIA(client) {
             const mensagemIA = resposta?.choices?.[0]?.message;
             const pensamento = mensagemIA?.reasoning_content || "Pensamentos vazios.";
             const conteudo = mensagemIA?.content?.trim() || "Erro ao gerar resposta.";
-
-            // Salva a resposta do bot para contexto futuro (only se for reply ao bot)
             memoriaConversa.set(canalId, {
                 respostaBot: conteudo
             });
@@ -169,7 +163,7 @@ function registrarHandlerIA(client) {
 
         } catch (err) {
             console.error(err);
-            message.reply("Erro ao processar. Tente novamente.");
+            message.reply("Paga mais pobre");
         }
     });
 }

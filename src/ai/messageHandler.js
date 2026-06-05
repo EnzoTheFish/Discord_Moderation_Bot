@@ -120,7 +120,7 @@ function registrarHandlerIA(client) {
             });
 
             
-
+            console.log(canalId);
             function checarCanal(canalId){
 
                 if (canalId === "1512427448111726602"){
@@ -130,6 +130,7 @@ function registrarHandlerIA(client) {
                 }
 
             }
+            console.log(checarCanal);
             let cacheAnimes = ""
 
             cron.schedule("0 * * * *", async () => {
@@ -137,7 +138,7 @@ function registrarHandlerIA(client) {
             });
 
             const noticias = cacheAnimes;
-            console.log(noticias);
+            console.log(JSON.stringify(noticias, null, 2));
 
 
             const resposta = await deepseek.chat.completions.create({

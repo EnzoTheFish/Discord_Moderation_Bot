@@ -17,9 +17,6 @@ let cacheAnimes = ""
             console.log("cache:");
             console.log(cacheAnimes);
 
-     client.once("ready", async () => { await atualizarNoticias();
-        cron.schedule("0 * * * *", atualizarNoticias);});
-
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [
         `Usuario: ${message.author.username}`,
@@ -89,6 +86,9 @@ async function montarContextoReply(message, client) {
 }
 
 function registrarHandlerIA(client) {
+     client.once("ready", async () => { await atualizarNoticias();
+        cron.schedule("0 * * * *", atualizarNoticias);});
+
     client.on("messageCreate", async (message) => {
         if (message.author.bot) return;
 

@@ -143,7 +143,7 @@ function registrarHandlerIA(client) {
                 }
 
             }
-            const canalAtual = checarCanal();
+            const canalAtual = checarCanal(message.channel.id);
             console.log(canalAtual);
 
             const resposta = await deepseek.chat.completions.create({

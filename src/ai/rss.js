@@ -20,7 +20,6 @@ async function buscarNoticiasAnime() {
 
         noticias.push(
             ...feed.items.slice(0, 5)
-            .map((item, i) =>  `${i + 1}. ${item.title}`)
         );
     }
         return noticias;

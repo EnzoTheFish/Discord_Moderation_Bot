@@ -6,6 +6,19 @@ const CANAL_PENSAMENTOS_ID = "1510323342677246204";
 const buscarNoticiasAnime = require("./rss");
 const contextoExtra = require("./systemPrompt");
 const cron = require('node-cron');
+let cacheAnimes = ""
+
+        async function atualizarNoticias() {
+            try {
+                cacheAnimes = await buscarNoticiasAnime();
+                console.log("Notícias atualizadas."); } catch (err) {
+                console.error(err);}
+            }
+            console.log("cache:");
+            console.log(cacheAnimes);
+
+     client.once("ready", async () => { await atualizarNoticias();
+        cron.schedule("0 * * * *", atualizarNoticias);});
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [
@@ -130,22 +143,6 @@ function registrarHandlerIA(client) {
                 }
 
             }
-
-            let cacheAnimes = ""
-
-        async function atualizarNoticias() {
-            try {
-                cacheAnimes = await buscarNoticiasAnime();
-                console.log("Notícias atualizadas."); } catch (err) {
-                console.error(err);}
-            }
-            atualizarNoticias()
-
-            cron.schedule("0 * * * *", async () => {cacheAnimes = await buscarNoticiasAnime();});
-
-            console.log("cache:");
-            console.log(cacheAnimes);
-
             const canalAtual = checarCanal();
 
             const resposta = await deepseek.chat.completions.create({

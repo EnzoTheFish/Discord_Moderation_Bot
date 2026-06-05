@@ -131,7 +131,7 @@ function registrarHandlerIA(client) {
 
             }
             let cacheAnimes = ""
-            
+
             cron.schedule("0 * * * *", async () => {
              cacheAnimes = await buscarNoticiasAnime();
             });
@@ -151,7 +151,8 @@ function registrarHandlerIA(client) {
                         role: "system",
                         content: ` ${systemPrompt}
                         canal: ${checarCanal}
-                        Contexto Extra Animes: ${contextoExtra}`
+                        Contexto Extra Animes: ${contextoExtra}
+                        Noticias Atuais de animes: ${noticias}`
                     },
                     ...historico
                 ],

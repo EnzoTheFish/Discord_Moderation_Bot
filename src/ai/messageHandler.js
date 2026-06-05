@@ -165,7 +165,7 @@ function registrarHandlerIA(client) {
                         content: ` ${systemPrompt}
                         canal: ${canalAtual}
                         Contexto Extra Animes: ${contextoExtra}
-                        Noticias Atuais de animes: ${cacheAnimes}`
+                        Noticias Atuais de animes: ${noticiasTexto}`
                     },
                     ...historico
                 ],

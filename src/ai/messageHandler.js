@@ -13,9 +13,9 @@ let cacheAnimes = ""
                 cacheAnimes = await buscarNoticiasAnime();
                 console.log("Notícias atualizadas."); } catch (err) {
                 console.error(err);}
-            }
             console.log("cache:");
             console.log(cacheAnimes);
+            }
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [
@@ -136,7 +136,7 @@ function registrarHandlerIA(client) {
             console.log(canalId);
             function checarCanal(canalId){
 
-                if (canalId === "1512427448111726602"){
+                if (canalId == "1512427448111726602"){
                     return "Canal de animes";
                 }else{
                     return "canal qualquer";
@@ -144,6 +144,7 @@ function registrarHandlerIA(client) {
 
             }
             const canalAtual = checarCanal();
+            console.log(canalAtual);
 
             const resposta = await deepseek.chat.completions.create({
                 model: "deepseek-v4-flash",

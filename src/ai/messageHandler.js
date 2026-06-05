@@ -137,6 +137,7 @@ function registrarHandlerIA(client) {
             });
 
             const noticias = cacheAnimes;
+            console.log(noticias);
 
 
             const resposta = await deepseek.chat.completions.create({

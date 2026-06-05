@@ -130,15 +130,20 @@ function registrarHandlerIA(client) {
                 }
 
             }
-            console.log(checarCanal);
+
             let cacheAnimes = ""
 
-            cron.schedule("0 * * * *", async () => {
-             cacheAnimes = await buscarNoticiasAnime();
-            });
+        async function atualizarNoticias() {
+            try {
+                cacheAnimes = await buscarNoticiasAnime();
+                console.log("Notícias atualizadas."); } catch (err) {
+                console.error(err);}
+            }
+            atualizarNoticias()
 
-            const noticias = cacheAnimes;
-            console.log(JSON.stringify(noticias, null, 2));
+            cron.schedule("0 * * * *",atualizarNoticias()); 
+
+            console.log(cacheAnimes);
 
 
             const resposta = await deepseek.chat.completions.create({

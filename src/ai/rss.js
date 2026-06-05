@@ -22,6 +22,7 @@ async function buscarNoticiasAnime() {
             ...feed.items.slice(0, 5)
             .map((item, i) =>  `${i + 1}. ${item.title}`)
         );
+        console.log("funçao buscar:")
         console.log(JSON.stringify(noticias, null, 2));
     }
         return noticias;

@@ -3,6 +3,8 @@ const systemPrompt = require("./systemPrompt");
 const analisarImagem = require("./geminiImage");
 const memoriaConversa = new Map();
 const CANAL_PENSAMENTOS_ID = "1510323342677246204";
+const buscarNoticiasAnime = require("./rss");
+const contextoExtra = require("./systemPrompt");
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [
@@ -43,9 +45,8 @@ async function montarContextoReply(message, client) {
     try {
         const mensagemOriginal = await message.fetchReference();
         const ehRespostaAoBot = mensagemOriginal.author.id === client.user.id;
-        const imagemOriginal = mensagemOriginal.attachments.first();
 
-
+       
         if (ehRespostaAoBot) {
             const canalId = message.channel.id;
             const dadosConversa = memoriaConversa.get(canalId);
@@ -80,9 +81,6 @@ function registrarHandlerIA(client) {
         const botMarcado = message.mentions.has(client.user);
         const { respondeuBot, contextoReply } = await montarContextoReply(message, client);
 
-        // Só responde se:
-        // 1. O bot foi mencionado
-        // 2. OU o usuário está respondendo a uma mensagem do bot
         if (!botMarcado && !respondeuBot) return;
 
         try {
@@ -103,15 +101,9 @@ function registrarHandlerIA(client) {
                 }
             }
 
-            // Analisa imagem se houver
             if (anexo?.contentType?.startsWith("image/")) {
-                try {
-                    descricaoImagem = await analisarImagem(anexo.url, anexo.contentType);
-                    console.log("imagem:", descricaoImagem);
-                } catch (err) {
-                    console.error("Erro ao analisar imagem:", err);
-                    descricaoImagem = "Nao foi possivel analisar a imagem enviada.";
-                }
+                descricaoImagem = await analisarImagem(anexo.url);
+                console.log("imagem:", descricaoImagem);
             }
 
             const mensagemUsuario = criarConteudoUsuario(
@@ -126,6 +118,26 @@ function registrarHandlerIA(client) {
                 content: mensagemUsuario
             });
 
+            
+
+            function checarCanal(canalId){
+
+                if (canalId === "1512427448111726602"){
+                    return "Canal de animes";
+                }else{
+                    return "canal qualquer";
+                }
+
+            }
+
+            cron.schedule("0 * * * *", async () => {
+             let cacheAnimes = ""
+             cacheAnimes = await buscarNoticiasAnime();
+            });
+
+            const noticias = cacheAnimes;
+
+
             const resposta = await deepseek.chat.completions.create({
                 model: "deepseek-v4-flash",
                 extra_body: {
@@ -136,7 +148,9 @@ function registrarHandlerIA(client) {
                 messages: [
                     {
                         role: "system",
-                        content: systemPrompt
+                        content: ` ${systemPrompt}
+                        canal: ${checarCanal}
+                        Contexto Extra Animes: ${contextoExtra}`
                     },
                     ...historico
                 ],
@@ -151,7 +165,6 @@ function registrarHandlerIA(client) {
                 respostaBot: conteudo
             });
 
-            // Canal de pensamentos
             const canalPensamentos = client.channels.cache.get(CANAL_PENSAMENTOS_ID);
             if (canalPensamentos) {
                 canalPensamentos.send(

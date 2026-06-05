@@ -130,9 +130,9 @@ function registrarHandlerIA(client) {
                 }
 
             }
-
+            let cacheAnimes = ""
+            
             cron.schedule("0 * * * *", async () => {
-             let cacheAnimes = ""
              cacheAnimes = await buscarNoticiasAnime();
             });
 

@@ -7,27 +7,27 @@ const buscarNoticiasAnime = require("./rss");
 const contextoExtra = require("./systemPrompt");
 const cron = require('node-cron');
 let cacheAnimes = "";
-const noticiasCompactas = [];
-const noticiasTexto = "";
+let noticiasCompactas = [];
+let noticiasTexto = "";
 
         async function atualizarNoticias() {
             try {
                 cacheAnimes = await buscarNoticiasAnime();
-                console.log("Notícias atualizadas."); } catch (err) {
-                console.error(err);}
-             noticiasCompactas = cacheAnimes
+                console.log("Notícias atualizadas."); 
+                noticiasCompactas = cacheAnimes
                 .slice(0, 10)
                 .map(n => ({
                     titulo: n.title,
                     resumo: n.contentSnippet,
                     data: n.pubDate,
-                    link: n.link
                 }));
-            noticiasTexto = JSON.stringify(noticiasCompactas, null, 2);
-            console.log("cache:");   
-            console.log(noticiasTexto);
-
-            }
+                noticiasTexto = noticiasCompactas
+                    .map((n, i) => ` ${i + 1}. ${n.titulo} Resumo: ${n.resumo} Data:${n.data} `)
+                    .join("\n\n");
+                console.log("cache:");   
+                console.log(noticiasTexto); } 
+            catch (err) {
+                console.error(err);} }
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [

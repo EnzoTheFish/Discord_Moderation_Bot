@@ -141,7 +141,7 @@ function registrarHandlerIA(client) {
             }
             atualizarNoticias()
 
-            cron.schedule("0 * * * *",atualizarNoticias()); 
+            cron.schedule("0 * * * *", async () => {cacheAnimes = await buscarNoticiasAnime();});
 
             console.log(cacheAnimes);
 

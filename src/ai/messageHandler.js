@@ -143,7 +143,10 @@ function registrarHandlerIA(client) {
 
             cron.schedule("0 * * * *", async () => {cacheAnimes = await buscarNoticiasAnime();});
 
+            console.log("cache:");
+            console.log(cacheAnimes);
 
+            const canalAtual = checarCanal();
 
             const resposta = await deepseek.chat.completions.create({
                 model: "deepseek-v4-flash",
@@ -156,7 +159,7 @@ function registrarHandlerIA(client) {
                     {
                         role: "system",
                         content: ` ${systemPrompt}
-                        canal: ${checarCanal}
+                        canal: ${canalAtual}
                         Contexto Extra Animes: ${contextoExtra}
                         Noticias Atuais de animes: ${cacheAnimes}`
                     },

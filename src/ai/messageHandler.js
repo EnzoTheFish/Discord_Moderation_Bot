@@ -6,15 +6,23 @@ const CANAL_PENSAMENTOS_ID = "1510323342677246204";
 const buscarNoticiasAnime = require("./rss");
 const contextoExtra = require("./systemPrompt");
 const cron = require('node-cron');
-let cacheAnimes = ""
+let cacheAnimes = "";
+const noticiasTexto = "";
 
         async function atualizarNoticias() {
             try {
                 cacheAnimes = await buscarNoticiasAnime();
                 console.log("Notícias atualizadas."); } catch (err) {
                 console.error(err);}
-            console.log("cache:");
-            console.log(cacheAnimes);
+            noticiasTexto = cacheAnimes
+                .slice(0, 5)
+                .map((n, i) => ` ${i + 1}. Titulo: ${n.title} Data: ${n.pubDate} Resumo ${(n.contentSnippet || n.content || n.introduction__text || "")
+                .replace(/<[^>]*>/g, "")
+                .slice(0, 300)}
+                `)
+                .join("\n\n"); 
+            console.log("cache:");   
+            console.log(noticiasTexto);
             }
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
@@ -132,8 +140,6 @@ function registrarHandlerIA(client) {
                 content: mensagemUsuario
             });
 
-            
-            console.log(canalId);
             function checarCanal(canalId){
 
                 if (canalId == "1512427448111726602"){

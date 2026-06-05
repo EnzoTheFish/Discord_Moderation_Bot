@@ -5,6 +5,7 @@ const memoriaConversa = new Map();
 const CANAL_PENSAMENTOS_ID = "1510323342677246204";
 const buscarNoticiasAnime = require("./rss");
 const contextoExtra = require("./systemPrompt");
+const cron = require('node-cron');
 
 function criarConteudoUsuario(message, contextoReply, anexo, descricaoImagem) {
     const partes = [
